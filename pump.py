@@ -146,9 +146,18 @@ while not EXIT_CYCLE:
         print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {:.8f} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
         print '[+] Placing sell order at {:.8f} ({}%)...'.format(ASK_SELL, PUMP_SELL)
         print "\n[!] Training Mode Active. No real orders are being placed."
+    
 
+    COIN_SUMMARY, ERROR = API.get_market("BTC_USDT")
+    LAST_PRICE = COIN_SUMMARY['LastPrice']
 
-    print '\n[*] PROFIT if sell order fills: {:.2f}%  ({:.8F} BTC)'.format(PROFITP, PROFIT)
+    if ERROR is not None:
+        print ERROR
+        break
+
+    USDPROFIT = LAST_PRICE*PROFIT
+
+    print '\n[*] PROFIT if sell order fills: {:.2f}%  ({:.8F} BTC)  ($ {:.2f})'.format(PROFITP, PROFIT, USDPROFIT)
 
     print '\nCheck Cryptopia to assure order has been filled!\n'
     print 'Adjust your order manually in Cryptopia if you observe the pump is weak and did not reach your sell limit.'
