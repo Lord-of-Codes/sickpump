@@ -86,10 +86,9 @@ while not EXIT_CYCLE:
     CLOSE_PRICE = COIN_SUMMARY['Close']
 
     if LAST_PRICE > CLOSE_PRICE + 0.20 * CLOSE_PRICE:
-        print '\nYou joined too late or this was pre-pumped! \
-               Close Price : {:.8f} . Last Price : {:.8f}'.format(CLOSE_PRICE, LAST_PRICE)
+        print '\nYou joined too late or this was pre-pumped!\nClose Price : {:.8f} . Last Price : {:.8f}'.format(CLOSE_PRICE, LAST_PRICE)
         LATE = raw_input("Still want to continue? (y/n): ")
-        if LATE == "y" or LATE == "yes":
+        if LATE.lower() == "y" or LATE == "yes":
             print '\nYou joined this pump despite warning, good luck!'
         else:
             print '\nOk! Trade has been exited. No order placed.'
@@ -117,7 +116,7 @@ while not EXIT_CYCLE:
 
 
     if ALLOW_ORDERS:
-        print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
+        print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {:.8f} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
         TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Buy', ASK_BUY, NUM_COINS)
         count1 = 1
         while ERROR is not None and count1 <= 10:
