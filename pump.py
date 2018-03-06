@@ -49,20 +49,17 @@ while not EXIT_CYCLE:
 
     signal.signal(signal.SIGINT, sigint_handler)
     print '\nWelcome to sickpump '
-    print '\nBuy and Sell orders will be instantly placed on Cryptopia at \
-           a specified % above the ASK price.\n'
+    print '\nBuy and Sell orders will be instantly placed on Cryptopia at a specified % above the ASK price.\n'
 
-    TRAINING = raw_input("   Live Mode (1) = Real orders will be placed.'\n\
-                             Training Mode (2) = No real orders will be placed.\n\n\
-                             Enter 1 for Live Mode or 2 for Training Mode - (1 or 2) ?: ")
+    TRAINING = raw_input("Live Mode (1) = Real orders will be placed.\nTraining Mode (2) = No real orders will be placed.\n\nEnter 1 for Live Mode or 2 for Training Mode - (1 or 2) ?: ")
     if TRAINING == "2":
         ALLOW_ORDERS = False
         print '\nTraining Mode Active! No real orders will be placed.'
         print '\nPress CTRL+C to exit at anytime.\n'
     else:
         ALLOW_ORDERS = True
-        print '\nLive Mode Active! Real orders will be placed.\n\n\
-               Press CTRL+C to exit at anytime.\n'
+        print '\nLive Mode Active! Real orders will be placed.'
+        print '\nPress CTRL+C to exit at anytime.\n'
     print 'You have {} BTC available.'.format(AVAILABLE_BTC)
     PUMP_BALANCE = float(raw_input("How much BTC would you like to use?: "))
     while PUMP_BALANCE > AVAILABLE_BTC:
@@ -105,10 +102,8 @@ while not EXIT_CYCLE:
 
     print '\nUsing {:.8f} BTC to buy {} .'.format(PUMP_BALANCE, PUMP_COIN)
     print 'Current ASK price for {} is {:.8f} BTC.'.format(PUMP_COIN, ASK_PRICE)
-    print '\nASK  {}% (your specified buy point) for {} is {:.8f} \
-           BTC.'.format(PUMP_BUY, PUMP_COIN, ASK_BUY)
-    print 'ASK  {}% (your specified sell point) for {} is {:.8f} \
-           BTC.'.format(PUMP_SELL, PUMP_COIN, ASK_SELL)
+    print '\nASK  {}% (your specified buy point) for {} is {:.8f} BTC.'.format(PUMP_BUY, PUMP_COIN, ASK_BUY)
+    print 'ASK  {}% (your specified sell point) for {} is {:.8f} BTC.'.format(PUMP_SELL, PUMP_COIN, ASK_SELL)
 
 
     # calculates the number of PUMP_COIN(s) to buy, taking into
@@ -135,12 +130,12 @@ while not EXIT_CYCLE:
         print TRADE
         print 'Succeeded in {} try'.format(count1)
         if ERROR is None:
-        	print '\n[+] Placing sell order at {:.8f} (+{}%)...'.format(ASK_SELL, PUMP_SELL)
+        	print '\n[+] Placing sell order at {:.8f} ({}%)...'.format(ASK_SELL, PUMP_SELL)
         	TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
         	count2 = 1
-        	while ERROR is not None and count2 <= 600:
+        	while ERROR is not None and count2 <= 50:
         		TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
-        		count = count + 1
+        		count2 = count2 + 1
         	if ERROR is not None:
             		print ERROR
             		break
@@ -149,8 +144,8 @@ while not EXIT_CYCLE:
         	print 'Succeeded in {} try'.format(count2)
     else:
         print "\n\n[!] Training Mode Active. No real orders are being placed."
-        print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
-        print '[+] Placing sell order at {:.8f} (+{}%)...'.format(ASK_SELL, PUMP_SELL)
+        print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {:.8f} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
+        print '[+] Placing sell order at {:.8f} ({}%)...'.format(ASK_SELL, PUMP_SELL)
         print "\n[!] Training Mode Active. No real orders are being placed."
 
 
