@@ -175,3 +175,4 @@ class Api(object):
                                                   hashlib.sha256).digest())
         header_value = "amx " + self.key + ":" + hmacsignature.decode('utf-8') + ":" + nonce
         return {'Authorization': header_value, 'Content-Type': 'application/json; charset=utf-8'}
+ 
