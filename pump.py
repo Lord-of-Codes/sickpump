@@ -68,22 +68,40 @@ while not EXIT_CYCLE:
 
     PUMP_BUY = float(raw_input("\nBuy Above Current Ask by what %: "))
     PUMP_SELL = float(raw_input("Sell Above Current Ask by what %: "))
+
+    COIN_SUMMARY, ERROR = API.get_market("BTC_USDT")
+    BTC_PRICE = COIN_SUMMARY['LastPrice']
+
+    if ERROR is not None:
+        print ERROR
+        break
+
+    TIMECHECK = raw_input("Press enter to import market data. Do this between 60 to 30 seconds before coin announcement")
+    MARKETS, ERROR = API.get_markets('BTC')
+    if ERROR is not None:
+        print ERROR
+        break
+
     print '\n*Orders will send immediately after entering coin ticker symbol.'
     PUMP_COIN_RAW = raw_input("Coin Ticker Symbol: ")
     PUMP_COIN = PUMP_COIN_RAW.upper()
 
-    COIN_PRICE, ERROR = API.get_market(PUMP_COIN + "_BTC")
-    if ERROR is not None:
-        print ERROR
-        break
-    ASK_PRICE = COIN_PRICE['AskPrice']
+    LOW = 0
+    HIGH = len(MARKETS)-1
+    COININDEX = None
+    while LOW <= HIGH:
+        MID = (LOW+HIGH)/2
+        if MARKETS[MID]['Label']==(PUMP_COIN+"/BTC"):
+            COININDEX = MID
+            break
+        if MARKETS[MID]['Label']<(PUMP_COIN+"/BTC"):
+            LOW = MID+1
+        if MARKETS[MID]['Label']>(PUMP_COIN+"/BTC"):
+            HIGH = MID-1
 
-    COIN_SUMMARY, ERROR = API.get_market(PUMP_COIN + "_BTC")
-    if ERROR is not None:
-        print ERROR
-        break
-    LAST_PRICE = COIN_SUMMARY['LastPrice']
-    CLOSE_PRICE = COIN_SUMMARY['Close']
+    ASK_PRICE = MARKETS[COININDEX]['AskPrice']
+    LAST_PRICE = MARKETS[COININDEX]['LastPrice']
+    CLOSE_PRICE = MARKETS[COININDEX]['Close']
 
     if LAST_PRICE > CLOSE_PRICE + 0.20 * CLOSE_PRICE:
         print '\nYou joined too late or this was pre-pumped!\nClose Price : {:.8f} . Last Price : {:.8f}'.format(CLOSE_PRICE, LAST_PRICE)
@@ -120,8 +138,8 @@ while not EXIT_CYCLE:
         TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Buy', ASK_BUY, NUM_COINS)
         count1 = 1
         while ERROR is not None and count1 <= 10:
-        	TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Buy', ASK_BUY, NUM_COINS)
-        	count1 = count1 + 1
+            TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Buy', ASK_BUY, NUM_COINS)
+            count1 = count1 + 1
         if ERROR is not None:
             print ERROR
             break
@@ -129,18 +147,18 @@ while not EXIT_CYCLE:
         print TRADE
         print 'Succeeded in {} try'.format(count1)
         if ERROR is None:
-        	print '\n[+] Placing sell order at {:.8f} ({}%)...'.format(ASK_SELL, PUMP_SELL)
-        	TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
-        	count2 = 1
-        	while ERROR is not None and count2 <= 50:
-        		TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
-        		count2 = count2 + 1
-        	if ERROR is not None:
-            		print ERROR
-            		break
-        	print'\nSell order successfully placed'
-        	print TRADE
-        	print 'Succeeded in {} try'.format(count2)
+            print '\n[+] Placing sell order at {:.8f} ({}%)...'.format(ASK_SELL, PUMP_SELL)
+            TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
+            count2 = 1
+            while ERROR is not None and count2 <= 50:
+                TRADE, ERROR = API.submit_trade(PUMP_COIN + '/BTC', 'Sell', ASK_SELL, NUM_COINS)
+                count2 = count2 + 1
+            if ERROR is not None:
+                    print ERROR
+                    break
+            print'\nSell order successfully placed'
+            print TRADE
+            print 'Succeeded in {} try'.format(count2)
     else:
         print "\n\n[!] Training Mode Active. No real orders are being placed."
         print '\n[+] Placing buy order for {:.8f} {} coins at {:.8f} BTC for a total of {:.8f} BTC'.format(NUM_COINS, PUMP_COIN, ASK_BUY, BUY_PRICE)
@@ -148,14 +166,7 @@ while not EXIT_CYCLE:
         print "\n[!] Training Mode Active. No real orders are being placed."
     
 
-    COIN_SUMMARY, ERROR = API.get_market("BTC_USDT")
-    LAST_PRICE = COIN_SUMMARY['LastPrice']
-
-    if ERROR is not None:
-        print ERROR
-        break
-
-    USDPROFIT = LAST_PRICE*PROFIT
+    USDPROFIT = BTC_PRICE*PROFIT
 
     print '\n[*] PROFIT if sell order fills: {:.2f}%  ({:.8F} BTC)  ($ {:.2f})'.format(PROFITP, PROFIT, USDPROFIT)
 

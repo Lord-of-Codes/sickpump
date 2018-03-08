@@ -70,12 +70,17 @@ class Api(object):
         return self.api_query(feature_requested='GetCurrencies')
 
     def get_tradepairs(self):
-        """ GEts all the trade pairs """
+        """ Gets all the trade pairs """
         return self.api_query(feature_requested='GetTradePairs')
 
     def get_markets(self):
-        """ Gets data for all markets """
+        """ Gets all the trade pairs """
         return self.api_query(feature_requested='GetMarkets')
+
+    def get_markets(self, basepair):
+        """ Gets data for all markets of a given basepair """
+        return self.api_query(feature_requested='GetMarkets',
+                              get_parameters={'basepair': basepair})
 
     def get_market(self, market):
         """ Gets market data """
@@ -175,4 +180,4 @@ class Api(object):
                                                   hashlib.sha256).digest())
         header_value = "amx " + self.key + ":" + hmacsignature.decode('utf-8') + ":" + nonce
         return {'Authorization': header_value, 'Content-Type': 'application/json; charset=utf-8'}
- 
+        
